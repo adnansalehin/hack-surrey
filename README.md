@@ -1,2 +1,2 @@
 # hack-surrey
-Huck Surrey Beta - Stock Information App
+Hack Surrey Beta - LearnInvestment
