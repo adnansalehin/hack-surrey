@@ -26,22 +26,13 @@ class App extends Component {
           <h1 className="App-title">Welcome to Learn Investment</h1>
         </header>
         <p className="App-intro">
-         Please provide your login details to log in to the platform
+         Please provide a search term to see recommendation
         </p>
 
         <div>
           <DataForm/>
         </div>
           {
-              this.state.data.map(function (field, index) {
-              return (
-                  <span>
-
-                      {"value: " + index + " iScore: " + field.integratedScore}
-                      <br/>
-                  </span>
-              )
-            })
           }
           {/*<span>{DataForm.getName()}</span>*/}
       </div>

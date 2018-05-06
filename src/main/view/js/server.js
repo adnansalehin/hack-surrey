@@ -7,7 +7,6 @@ var app = express();
 
 app.get('/getRes/:tick', (req,res, next) => {
     this.state = {ticker: req.params.tick};
-    // this.state.ticker = req.params.tick;
     console.log(res.json);
     console.log("tikcer value received: " + req.params.tick);
     next()
@@ -17,7 +16,7 @@ app.use('/getRes', async (req,res) => {
     console.log("tikcer value received: " + this.ticker);
     const args = {
         "headers": {
-            "Authorization": "Bearer c4XdqSU8MLeB3owjX9yJxkv9mKHa"
+            "Authorization": "Bearer Jhqf2v2KGivsl7sy1zutMQR3qkb1"
         },
         "body": {
             "where": {

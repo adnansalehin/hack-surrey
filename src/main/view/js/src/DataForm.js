@@ -1,12 +1,23 @@
 import React, { Component } from 'react';
+import $ from 'jquery';
+import Chart from './Chart.js';
 import { Button } from 'reactstrap';
 
 class DataForm extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {data: [], result: "", value: 'AAPL', urlConst: 'http://localhost:3001/getRes/' };
-
+        // this.state = { };
+        this.state = {data: [], result: "", value: 'AAPL', urlConst: 'http://localhost:3001/getRes/',
+            value: '',
+            nasdaq: '',
+            name: '',
+            change: '',
+            searchUrlPrefix: "https://public.opendatasoft.com/api/records/1.0/search/?dataset=nasdaq-companies&q=",
+            searchUrlSuffix: "&facet=name&facet=sector&facet=industry",
+            iexUrlPrefix: "https://api.iextrading.com/1.0/stock/",
+            iexTimeSeriesSuffix: "/time-series"
+        };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -34,17 +45,48 @@ class DataForm extends Component {
             }
         });
 
-        return ("HiDate: "+ highDate.toString()+ "hiScore:" +highest.toString());
+        return ("HiDate: "+ highDate.toString()+ " hiScore: " +highest.toString());
     }
+
+
     handleChange(event) {
         this.setState({value: event.target.value});
     }
 
     handleSubmit(event) {
         event.preventDefault();
-        // alert('A name was submitted: ' + this.state.value);
-        this.fetchData(this.state.value)
+        $.ajax({
+            url: this.state.searchUrlPrefix+this.state.value+this.state.searchUrlSuffix,
+            success: this.fetchNasdaq,
+            error: function(req, err){ console.log('opendatasoft API call for NASDAQ failed ' + err); }
+        });
     }
+    fetchNasdaq = (jsonResponse) => {
+        if(jsonResponse.records[0]!=null) {
+            this.setState({nasdaq: jsonResponse.records[0].fields.symbol});
+            this.setState({name: jsonResponse.records[0].fields.name});
+            this.parseIexTimeQuery();
+            this.fetchData(this.state.nasdaq)
+        }
+    };
+
+
+    parseIexTimeQuery() {
+        $.ajax({
+            url: this.state.iexUrlPrefix+this.state.nasdaq+this.state.iexTimeSeriesSuffix,
+            success: this.fetchIexTimeData,
+            error: function(req, err){ console.log('IEX API call for data failed ' + err); }
+        });
+    }
+    fetchIexTimeData = (jsonResponse) => {
+        if(jsonResponse[1]!=null) {
+            var sum = 0;
+            for (var i = 0; i<=20;i++) {
+                sum += jsonResponse[i].changeOverTime;
+            }
+            this.setState({change: sum});
+        }
+    };
 
     render() {
         return (
@@ -56,8 +98,14 @@ class DataForm extends Component {
                     </label>
                     <input type="submit" value="Submit" />
                 </form>
+
                 <div>
+                    <span>Change over time for {this.state.name} is  {this.state.change} </span>
+                    <br/>
                     <span>{this.state.result}</span>
+                </div>
+                <div>
+                    {/*<Chart/>*/}
                 </div>
             </div>
         );
