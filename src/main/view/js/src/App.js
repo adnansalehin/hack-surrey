@@ -4,20 +4,18 @@ import './App.css';
 import DataForm from './DataForm.js';
 
 
-
 class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
             data: []
-        }
-        fetch('http://localhost:3001/getAPPL').then((body) => {
-            return body.json();
-        }).then((data) => {
-            console.log(data);
-            this.setState({data: data.data});
-        })
-
+        };
+        // fetch('http://localhost:3001/getRes').then((body) => {
+        //     return body.json();
+        // }).then((data) => {
+        //     console.log(data);
+        //     this.setState({data: data.data});
+        // })
     }
 
     render() {
@@ -34,14 +32,18 @@ class App extends Component {
         <div>
           <DataForm/>
         </div>
+          {
+              this.state.data.map(function (field, index) {
+              return (
+                  <span>
 
-          <p>
-              { this.state.data.map(
-                  (key, value) => (key.integratedScore + "\n  ")
-              )}
-
-          </p>
-
+                      {"value: " + index + " iScore: " + field.integratedScore}
+                      <br/>
+                  </span>
+              )
+            })
+          }
+          {/*<span>{DataForm.getName()}</span>*/}
       </div>
 
     );
